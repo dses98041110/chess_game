@@ -672,8 +672,20 @@ void Game::check(int pieceInSquare[64], int target_position)
    }
    if(check){
        QMessageBox msgBox;
+       if(blackCheck){
+           msgBox.setText("白方勝利");
+           msgBox.exec();
+           close();
+           return;
+       }
+       blackCheck=true;
        msgBox.setText("Check");
        msgBox.exec();
+
+   }
+   else{
+       blackCheck=false;
+       whiteCheck=false;
    }
 }
 
@@ -909,11 +921,13 @@ void Game::blackPieceEatBitBoardUpdate(CHESS_POSITION *chess_position, int targe
 
 BitBoard Game::whiteBishipMove(int pieceInSquare[64], int target_position)
 {
-    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
+//    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
     p=0;
     legalMove=0;
     b=1;
-    temp=(diag_H8A1_attacks[target_position][(((createRotated45Board(bitboard))>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((createRotated_45Board(bitboard))>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+//    temp=(diag_H8A1_attacks[target_position][(((createRotated45Board(bitboard))>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((createRotated_45Board(bitboard))>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+    temp=(diag_H8A1_attacks[target_position][(((chess_position.rotated45)>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((chess_position.rotated45)>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+
     while(temp){
         if((temp&1)){
             if((pieceInSquare[p]&0x8)|!(pieceInSquare[p]&0x7)){
@@ -928,11 +942,12 @@ BitBoard Game::whiteBishipMove(int pieceInSquare[64], int target_position)
 
 BitBoard Game::blackBishipMove(int pieceInSquare[64], int target_position)
 {
-    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
+//    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
     p=0;
     legalMove=0;
     b=1;
-    temp=(diag_H8A1_attacks[target_position][(((createRotated45Board(bitboard))>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((createRotated_45Board(bitboard))>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+//    temp=(diag_H8A1_attacks[target_position][(((createRotated45Board(bitboard))>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((createRotated_45Board(bitboard))>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+    temp=(diag_H8A1_attacks[target_position][(((chess_position.rotated45)>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((chess_position.rotated45)>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
 
 
     while(temp){
@@ -1108,12 +1123,16 @@ BitBoard Game::whitePawnMove(int pieceInSquare[64], int target_position)
 
 BitBoard Game::whiteQueenMove(int pieceInSquare[64], int target_position)
 {
-    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
+//    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
 
     p=0;
     b=1;
-    rook_temp=(rank_attacks[target_position][(bitboard>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(createRotated_90Board(bitboard)>>(8*(r90R_map[target_position]/8)))&0xff]);
-    bishop_temp=(diag_H8A1_attacks[target_position][(((createRotated45Board(bitboard))>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((createRotated_45Board(bitboard))>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+//    rook_temp=(rank_attacks[target_position][(bitboard>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(createRotated_90Board(bitboard)>>(8*(r90R_map[target_position]/8)))&0xff]);
+    rook_temp=(rank_attacks[target_position][(chess_position.pieces>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(chess_position.rotated_90>>(8*(r90R_map[target_position]/8)))&0xff]);
+
+//    bishop_temp=(diag_H8A1_attacks[target_position][(((createRotated45Board(bitboard))>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((createRotated_45Board(bitboard))>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+    bishop_temp=(diag_H8A1_attacks[target_position][(((chess_position.rotated45)>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((chess_position.rotated45)>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+
     temp=rook_temp|bishop_temp;
    legalMove=0;
 
@@ -1131,12 +1150,16 @@ BitBoard Game::whiteQueenMove(int pieceInSquare[64], int target_position)
 
 BitBoard Game::blackQueenMove(int pieceInSquare[64], int target_position)
 {
-    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
+//    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
 
     p=0;
     b=1;
-    rook_temp=(rank_attacks[target_position][(bitboard>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(createRotated_90Board(bitboard)>>(8*(r90R_map[target_position]/8)))&0xff]);
-    bishop_temp=(diag_H8A1_attacks[target_position][(((createRotated45Board(bitboard))>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((createRotated_45Board(bitboard))>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+//    rook_temp=(rank_attacks[target_position][(bitboard>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(createRotated_90Board(bitboard)>>(8*(r90R_map[target_position]/8)))&0xff]);
+    rook_temp=(rank_attacks[target_position][(chess_position.pieces>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(chess_position.rotated_90>>(8*(r90R_map[target_position]/8)))&0xff]);
+
+//    bishop_temp=(diag_H8A1_attacks[target_position][(((createRotated45Board(bitboard))>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((createRotated_45Board(bitboard))>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+    bishop_temp=(diag_H8A1_attacks[target_position][(((chess_position.rotated45)>>(shift_H8A1_diag[target_position]))&((b<<(length_H8A1_diag[target_position]))-1))])|(diag_A8H1_attacks[target_position][(((chess_position.rotated45)>>(shift_A8H1_diag[target_position]))&((b<<(length_A8H1_diag[target_position]))-1))]);
+
     temp=rook_temp|bishop_temp;
    legalMove=0;
 
@@ -1154,9 +1177,12 @@ BitBoard Game::blackQueenMove(int pieceInSquare[64], int target_position)
 }
 BitBoard Game::whiteRookMove(int pieceInSquare[64], int target_position)
 {
-    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
+//    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
+//    temp=(rank_attacks[target_position][(bitboard>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(createRotated_90Board(bitboard)>>(8*(r90R_map[target_position]/8)))&0xff]);
+
     p=0;
-    temp=(rank_attacks[target_position][(bitboard>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(createRotated_90Board(bitboard)>>(8*(r90R_map[target_position]/8)))&0xff]);
+    temp=(rank_attacks[target_position][(chess_position.pieces>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(chess_position.rotated_90>>(8*(r90R_map[target_position]/8)))&0xff]);
+
    legalMove=0;
 
    while(temp){
@@ -1174,9 +1200,12 @@ BitBoard Game::whiteRookMove(int pieceInSquare[64], int target_position)
 }
 BitBoard Game::blackRookMove(int pieceInSquare[64], int target_position)
 {
-    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
+//    BitBoard bitboard=pieceInSquare2BitBoard(pieceInSquare);
+//    temp=(rank_attacks[target_position][(bitboard>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(createRotated_90Board(bitboard)>>(8*(r90R_map[target_position]/8)))&0xff]);
     p=0;
-    temp=(rank_attacks[target_position][(bitboard>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(createRotated_90Board(bitboard)>>(8*(r90R_map[target_position]/8)))&0xff]);
+
+    temp=(rank_attacks[target_position][(chess_position.pieces>>(8*(target_position/8)))&0xff])|(file_attacks[target_position][(chess_position.rotated_90>>(8*(r90R_map[target_position]/8)))&0xff]);
+
    legalMove=0;
 
    while(temp){
@@ -1327,6 +1356,93 @@ int Game::minimax(int pieceInSquare[64], int target_position,int alpha,int beta,
         return val;
     }
 }
+
+int Game::negaMax(bool isWhite, int depth, int alpha, int beta)
+{
+    if(depth<=0){
+        return evaluateBoard(chess_position.pieceInSquare);
+    }
+    int category=0;
+    for(int i=0;i<64;i++){
+        category=chess_position.pieceInSquare[i];
+        if(isWhite){
+            if(category<=0){
+                continue;
+            }
+        }
+        else{
+            if(category>=0){
+                continue;
+            }
+        }
+        BitBoard legalMove=0;
+        //switch_category
+        switch (category) {
+        case 1:
+            legalMove=whitePawnMove(chess_position.pieceInSquare,i);
+            break;
+        case 2:
+            legalMove=whiteKnightMove(chess_position.pieceInSquare,i);
+            break;
+        case 3:
+            legalMove=whiteBishipMove(chess_position.pieceInSquare,i);
+            break;
+        case 4:
+            legalMove=whiteRookMove(chess_position.pieceInSquare,i);
+            break;
+        case 5:
+            legalMove=whiteQueenMove(chess_position.pieceInSquare,i);
+            break;
+        case 6:
+            legalMove=whiteKingMove(chess_position.pieceInSquare,i);
+            break;
+        case -1:
+            legalMove=blackPawnMove(chess_position.pieceInSquare,i);
+            break;
+        case -2:
+            legalMove=blackKnightMove(chess_position.pieceInSquare,i);
+            break;
+        case -3:
+            legalMove=blackBishipMove(chess_position.pieceInSquare,i);
+            break;
+        case -4:
+            legalMove=blackRookMove(chess_position.pieceInSquare,i);
+            break;
+        case -5:
+            legalMove=blackQueenMove(chess_position.pieceInSquare,i);
+            break;
+        case -6:
+            legalMove=blackKingMove(chess_position.pieceInSquare,i);
+            break;
+        default:
+            legalMove=0;
+            break;
+        }
+        //switch_category_end
+        int pp=0;
+        while (legalMove) {
+            if(legalMove&1){
+                bitBoardUpdate(&chess_position,i,pp);
+                int val = -negaMax(!isWhite,depth-1,-beta,-alpha);
+                bitBoardUpdate(&chess_position,pp,i);
+                if (val >= beta) {
+                    return val;
+                }
+                if (val > alpha) {
+                    alpha = val;
+                    bestBlackMoveCurrent=i;
+                    bestBlackMoveTarget=pp;
+                }
+            }
+            legalMove>>=1;
+            pp++;
+        }
+    }
+
+    return alpha;
+}
+
+
 
 void Game::blackMove(int current_position,int target_position){
     pieceToMove=collection[7-(current_position>>3)][7-(current_position%8)]->currentPiece;

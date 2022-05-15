@@ -192,6 +192,7 @@ public:
 
 
     int minimax(int pieceInSquare[64],int target_position,int alpha,int beta,int depth);
+    int negaMax(bool isWhite,int depth,int alpha,int beta);
     void check(int pieceInSquare[], int target_position);
     int evaluateBoard(int pieceInSquare[64]);
 
@@ -202,6 +203,8 @@ public:
 
     int bestBlackMoveCurrent;
     int bestBlackMoveTarget;
+    bool blackCheck=false;
+    bool whiteCheck=false;
 
 private:
     QGraphicsScene *gameScene;

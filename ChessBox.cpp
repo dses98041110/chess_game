@@ -6,7 +6,6 @@
 extern Game *game;
 ChessBox::ChessBox(QGraphicsItem *parent):QGraphicsRectItem(parent)
 {
-
     //making the Square CHess Box
     setRect(0,0,100,100);
     brush.setStyle(Qt::SolidPattern);
@@ -68,8 +67,7 @@ void ChessBox::mousePressEvent(QGraphicsSceneMouseEvent *event){
        y=this->y();
        int target_position =63-( x/62 + (y/62)*8 );
 
-       //bitBoardUpdate
-      game->bitBoardUpdate(&(game->chess_position),current_position,target_position);
+
 
         //changing the new stat and resetting the previous left region
         game->pieceToMove->getCurrentBox()->setHasChessPiece(false);
@@ -80,6 +78,8 @@ void ChessBox::mousePressEvent(QGraphicsSceneMouseEvent *event){
         placePiece(game->pieceToMove);
         //placePiece_end
 
+        //bitBoardUpdate
+       game->bitBoardUpdate(&(game->chess_position),current_position,target_position);
         //bitBoardUpdate_end
         for(int i=0;i<64;i++){
             if(game->chess_position.pieceInSquare[i]==-6){
@@ -110,8 +110,17 @@ void ChessBox::mousePressEvent(QGraphicsSceneMouseEvent *event){
             }
         }
         //minimx_end
+
+//        game->negaMax(0,4,INT_MIN,INT_MAX);
         game->blackMove(bestPiece,bestMove);
         game->bitBoardUpdate(&(game->chess_position),bestPiece,bestMove);
+        for(int i=0;i<64;i++){
+            if(game->chess_position.pieceInSquare[i]==-6){
+                game->check(game->chess_position.pieceInSquare,i);
+                break;
+            }
+
+        }
 
     }
     //Selecting couterpart of the chessPiece
